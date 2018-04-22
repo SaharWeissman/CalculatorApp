@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true">
+        <processorPath useClasspath="false">
+          <entry name="C:/Workspace/AndroidProjects/PooledObject/pooled-object/src/main/java/com/saharw/objectpool/codegen/PooledObjectProcessor.java" />
+        </processorPath>
+      </profile>
+      <profile name="PooledObjectAnnotationProcessor" enabled="true">
+        <processorPath useClasspath="false">
+          <entry name="C:/Workspace/AndroidProjects/PooledObject/compiler/src/main/java/com/saharw/objectpool/codegen/PooledObjectProcessor.java" />
+        </processorPath>
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
