@@ -6,4 +6,7 @@ import android.app.Activity
  * Created by saharw on 22/04/2018.
  */
 class MainModel(val activity: Activity) {
+    fun foo() {
+        var calc = Calculator
+    }
 }
