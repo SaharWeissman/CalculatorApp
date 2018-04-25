@@ -1,0 +1,3 @@
+[submodule "CalculatorSDK"]
+	path = CalculatorSDK
+	url = https://github.com/ssdd1886/CalculatorSDK.git
