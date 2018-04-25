@@ -26,6 +26,12 @@ class MainActivity : BaseActivity() {
         mPresenter.onCreate()
     }
 
+    override fun onResume() {
+        Log.d(TAG, "onResume")
+        super.onResume()
+        mPresenter.onResume()
+    }
+
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
         super.onDestroy()

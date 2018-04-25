@@ -1,1 +1,1 @@
-include ':app', 'CalculatorSDK:Lib'
+include ':app', ':CalculatorSDK:Lib'

@@ -1,10 +1,9 @@
 package com.saharw.calculator.presentation.base
 
 /**
- * Created by saharw on 22/04/2018.
+ * Created by saharw on 25/04/2018.
  */
-interface IPresenter {
+interface IModel {
     fun onCreate()
-    fun onResume()
     fun onDestroy()
 }
