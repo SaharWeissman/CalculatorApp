@@ -24,7 +24,7 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
 
         // model
         model.onCreate()
-//        model.mEvalResult.subscribeOn(Schedulers.computation()).subscribe { onEvalResultReady(it) }
+        model.mEvalResult.subscribeOn(Schedulers.computation()).subscribe { onEvalResultReady(it) }
 
         // init fields of presenter
         mExpressionSb = StringBuilder()
