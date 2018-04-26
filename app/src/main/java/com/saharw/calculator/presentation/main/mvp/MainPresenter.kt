@@ -12,7 +12,8 @@ import io.reactivex.schedulers.Schedulers
 class MainPresenter(private val activity: AppCompatActivity, val view: MainView, private val layoutId: Int, val model: MainModel) : IPresenter {
 
     private val TAG = "MainPresenter"
-    private lateinit var expressionSb : StringBuilder
+    private lateinit var mExpressionSb: StringBuilder
+    private var mPendingOperator : Char = ' '
 
     override fun onCreate() {
         Log.d(TAG, "onCreate")
@@ -26,7 +27,7 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
 //        model.mEvalResult.subscribeOn(Schedulers.computation()).subscribe { onEvalResultReady(it) }
 
         // init fields of presenter
-        expressionSb = StringBuilder()
+        mExpressionSb = StringBuilder()
     }
 
     override fun onDestroy() {
@@ -42,6 +43,15 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
 
     private fun onCalcBtnClicked(calcButton: CalculatorButton?) {
         Log.d(TAG, "onCalcBtnClicked: btn.val = ${calcButton?.`val`}")
+
+        /*
+         * logic will be this:
+         * determine type of expression, can be:
+         * 1. just numeric (=contains only digits) => display in main output
+         * 2. numeric + operator (only "left side" of equation) => display numeric in main output & display operator in top output
+         * 3. numeric + operator + numeric => equation is ready, show left numeric + operand on top & display right operand on main console
+         * 4. either '=' was pressed / another operator was pressed => eval expression, display result in main output & new operator on top
+         */
 
     }
 
