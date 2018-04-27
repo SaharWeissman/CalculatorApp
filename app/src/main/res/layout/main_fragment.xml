@@ -8,23 +8,30 @@
         android:orientation="vertical">
         <TextView
             android:id="@+id/txtV_output_top"
-            android:text="this is sample text top"
+            android:text=""
+            android:textAlignment="center"
             android:textSize="@dimen/txt_size_small"
             android:textColor="@color/txt_color_main"
             android:layout_width="match_parent"
             android:layout_height="24dp" />
         <TextView
             android:id="@+id/txtV_output_main"
-            android:text="this is sample text console"
+            android:text="@string/calc_main_output_intial_text"
             android:textSize="@dimen/txt_size_normal"
             android:textColor="@color/txt_color_main"
             android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_height="80dp" />
+        <GridView
+            android:id="@+id/gridv_btns_area"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:columnWidth="80dp"
+            android:verticalSpacing="5dp"
+            android:horizontalSpacing="5dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            android:numColumns="auto_fit"
+            />
     </LinearLayout>
-    <RelativeLayout
-        android:id="@+id/relLay_btns_area"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-
-    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

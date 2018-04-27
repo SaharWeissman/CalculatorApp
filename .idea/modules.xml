@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Calculator.iml" filepath="$PROJECT_DIR$/Calculator.iml" />
+      <module fileurl="file://D:\Workspace\Practice\CalculatorApp\Calculator.iml" filepath="D:\Workspace\Practice\CalculatorApp\Calculator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CalculatorApp.iml" filepath="$PROJECT_DIR$/CalculatorApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/CalculatorSDK/CalculatorSDK.iml" filepath="$PROJECT_DIR$/CalculatorSDK/CalculatorSDK.iml" />
+      <module fileurl="file://D:\Workspace\Practice\CalculatorApp\CalculatorSDK\CalculatorSDK.iml" filepath="D:\Workspace\Practice\CalculatorApp\CalculatorSDK\CalculatorSDK.iml" />
       <module fileurl="file://$PROJECT_DIR$/CalculatorSDK/Lib/Lib.iml" filepath="$PROJECT_DIR$/CalculatorSDK/Lib/Lib.iml" />
+      <module fileurl="file://D:\Workspace\Practice\CalculatorApp\CalculatorSDK\Lib\Lib.iml" filepath="D:\Workspace\Practice\CalculatorApp\CalculatorSDK\Lib\Lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
