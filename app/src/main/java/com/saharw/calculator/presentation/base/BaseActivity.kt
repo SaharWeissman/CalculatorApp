@@ -14,7 +14,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private val TAG = "BaseActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "IModel")
+        Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_main)
