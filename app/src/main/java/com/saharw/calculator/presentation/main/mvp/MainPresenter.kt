@@ -76,14 +76,21 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
             }else {
 
                 // check if need to clear data - if current displayed number is result of previous computation
-                if(mPendingOperator == '='){
+                if(mPendingOperator == '=' && calcButton.`val` != "="){
                     onClearInvoked(0f, ' ')
                 }
 
                 if(mPendingOperator == ' ') {
                     mExpressionSb.append(calcButton.`val`)
                 }else {
-                    mExpressionSb.append(mPendingOperator + calcButton.`val`)
+                    var pendingOpStr = ""
+                    if(mPendingOperator != '='){
+                        pendingOpStr += mPendingOperator
+                    }
+                    if(calcButton.`val` != "="){
+                        pendingOpStr += calcButton.`val`
+                    }
+                    mExpressionSb.append(pendingOpStr)
                     mPendingOperator = ' '
                 }
                 var expType = ExpressionUtil.getExpressionType(mExpressionSb.toString())

@@ -39,7 +39,7 @@ object ExpressionUtil {
                     var operatorChar = matchResult.value.toCharArray()[0]
                     res = ExpressionTypeResult(EXP_TYPE_DISPLAY, exp.substring(exp.lastIndexOf(operatorChar)+1, exp.length), operatorChar)
                 }else{
-                    val pendingOperator = if(exp.last() != '='){exp.last()}else{' '}
+                    val pendingOperator = if(!arrayListOf('=','.').contains(exp.last())){exp.last()}else{' '}
                     res = ExpressionTypeResult(EXP_TYPE_DISPLAY, exp.substring(0, exp.length-1), pendingOperator)
                 }
             }
