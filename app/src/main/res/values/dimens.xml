@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="txt_size_small">15dp</dimen>
-    <dimen name="txt_size_normal">30dp</dimen>
+    <dimen name="txt_size_small">22dp</dimen>
+    <dimen name="txt_size_normal">32dp</dimen>
     <dimen name="txt_size_big">50dp</dimen>
 </resources>

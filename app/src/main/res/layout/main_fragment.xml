@@ -17,6 +17,7 @@
         <TextView
             android:id="@+id/txtV_output_main"
             android:text="@string/calc_main_output_intial_text"
+            android:layout_marginLeft="10dp"
             android:textSize="@dimen/txt_size_normal"
             android:textColor="@color/txt_color_main"
             android:layout_width="match_parent"
@@ -31,7 +32,7 @@
             android:horizontalSpacing="5dp"
             android:stretchMode="columnWidth"
             android:gravity="center"
-            android:numColumns="auto_fit"
+            android:numColumns="4"
             />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

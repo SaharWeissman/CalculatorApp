@@ -3,8 +3,8 @@ package com.saharw.calculator.presentation.main.mvp
 import android.app.Activity
 import android.util.Log
 import com.saharw.calculator.presentation.base.IModel
-import com.saharw.calculatorsdk.core.Calculator
 import io.reactivex.subjects.PublishSubject
+import com.saharw.calculatorsdk.core.Calculator
 
 /**
  * Created by saharw on 22/04/2018.

@@ -4,7 +4,9 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.saharw.calculator.entities.CalculatorButton
 import com.saharw.calculator.presentation.base.IPresenter
+import com.saharw.calculator.util.ExpressionUtil
 import io.reactivex.schedulers.Schedulers
+import com.saharw.calculator.extensions.clear
 
 /**
  * Created by saharw on 22/04/2018.
@@ -14,20 +16,28 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
     private val TAG = "MainPresenter"
     private lateinit var mExpressionSb: StringBuilder
     private var mPendingOperator : Char = ' '
+    private val VALUE_EMPTY: String = "0"
+
+    private var mWasCreated = false
+    private var mWasResumed = false
 
     override fun onCreate() {
         Log.d(TAG, "onCreate")
+        if(!mWasCreated) {
 
-        // view
-        view.onViewCreate(activity, layoutId)
-        view.mButtonClickSubject.subscribeOn(Schedulers.computation()).subscribe { onCalcBtnClicked(it) }
+            mWasCreated = true
 
-        // model
-        model.onCreate()
-        model.mEvalResult.subscribeOn(Schedulers.computation()).subscribe { onEvalResultReady(it) }
+            // view
+            view.onViewCreate(activity, layoutId)
+            view.mButtonClickSubject.subscribeOn(Schedulers.computation()).subscribe { onCalcBtnClicked(it) }
 
-        // init fields of presenter
-        mExpressionSb = StringBuilder()
+            // model
+            model.onCreate()
+            model.mEvalResult.subscribeOn(Schedulers.computation()).subscribe { onEvalResultReady(it) }
+
+            // init fields of presenter
+            mExpressionSb = StringBuilder()
+        }
     }
 
     override fun onDestroy() {
@@ -38,7 +48,10 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
 
     override fun onResume() {
         Log.d(TAG, "onResume()")
-        view.onViewResume()
+        if(!mWasResumed) {
+            mWasResumed = true
+            view.onViewResume()
+        }
     }
 
     private fun onCalcBtnClicked(calcButton: CalculatorButton?) {
@@ -53,9 +66,76 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
          * 4. either '=' was pressed / another operator was pressed => eval expression, display result in main output & new operator on top
          */
 
+        // update sb
+        if(calcButton != null) {
+
+            // check if this is CLEAR button
+            if(calcButton.`val` == view.clearButtonStr){
+                Log.d(TAG, "clear button was clicked")
+                onClearInvoked(0f, ' ')
+            }else {
+
+                // check if need to clear data - if current displayed number is result of previous computation
+                if(mPendingOperator == '='){
+                    onClearInvoked(0f, ' ')
+                }
+
+                if(mPendingOperator == ' ') {
+                    mExpressionSb.append(calcButton.`val`)
+                }else {
+                    mExpressionSb.append(mPendingOperator + calcButton.`val`)
+                    mPendingOperator = ' '
+                }
+                var expType = ExpressionUtil.getExpressionType(mExpressionSb.toString())
+                when (expType.type) {
+                    ExpressionUtil.EXP_TYPE_DISPLAY -> {
+                        Log.d(TAG, "case \"EXP_TYPE_DISPLAY\"")
+                        var value = expType.value
+                        if(value?.isEmpty()!!){
+                            value = VALUE_EMPTY
+                        }
+                        view.setMainOutputValue(value?.toFloat()!!)
+                        view.setTopOutputValue(expType.pendingOperator)
+
+                        if (mExpressionSb.last() == '=') {
+                            mExpressionSb.deleteCharAt(mExpressionSb.length - 1)
+                        }
+                    }
+                    ExpressionUtil.EXP_TYPE_EVAL_ALL -> {
+                        Log.d(TAG, "case \"EXP_TYPE_EVAL_ALL\"")
+                        model.eval(expType.value!!)
+                    }
+                    ExpressionUtil.EXP_TYPE_EVAL_PENDING_OP -> {
+                        Log.d(TAG, "case \"EXP_TYPE_EVAL_PENDING_OP\"")
+                        mPendingOperator = expType.pendingOperator
+                        model.eval(expType.value!!)
+                    }
+                    ExpressionUtil.EXP_TYPE_ERROR -> {
+                        Log.d(TAG, "case \"EXP_TYPE_ERROR\"")
+                    }
+                    else -> {
+                        Log.e(TAG, "case \"else\"")
+                    }
+                }
+            }
+        }
     }
 
     private fun onEvalResultReady(result: Float?) {
         Log.d(TAG, "onEvalResultReady: $result")
+        view.setMainOutputValue(result?: 0f)
+        mExpressionSb.clear()
+        mExpressionSb.append(result)
+        if(mPendingOperator == ' ') {
+            mPendingOperator = '='
+        }
+        view.setTopOutputValue(mPendingOperator)
+    }
+
+    private fun onClearInvoked(clearValue : Float, clearPendingOpChar: Char) {
+        mExpressionSb.clear()
+        mPendingOperator = clearPendingOpChar
+        view.setMainOutputValue(clearValue)
+        view.setTopOutputValue(clearPendingOpChar)
     }
 }

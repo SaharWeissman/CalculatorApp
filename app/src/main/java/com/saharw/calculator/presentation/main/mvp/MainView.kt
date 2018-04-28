@@ -29,12 +29,14 @@ class MainView : Fragment(), IView, View.OnClickListener {
     private lateinit var mOutputTop: TextView
 
     var mButtonClickSubject = PublishSubject.create<CalculatorButton>()
+    var clearButtonStr = "CLR"
 
     private var mBtnsList = listOf(
             CalculatorButton("1"), CalculatorButton("2"), CalculatorButton("3"), CalculatorButton("+"),
             CalculatorButton("4"), CalculatorButton("5"), CalculatorButton("6"), CalculatorButton("-"),
             CalculatorButton("7"), CalculatorButton("8"), CalculatorButton("9"), CalculatorButton("/"),
-            CalculatorButton("."), CalculatorButton("0"), CalculatorButton("="), CalculatorButton("*")
+            CalculatorButton("."), CalculatorButton("0"), CalculatorButton("="), CalculatorButton("*"),
+            CalculatorButton(clearButtonStr)
     )
     private lateinit var mBtnsGridAdapater: CalcButtonsAdapter
 
@@ -80,10 +82,23 @@ class MainView : Fragment(), IView, View.OnClickListener {
         mButtonClickSubject.onNext(calcButton)
     }
 
-    fun setEvalResult(result : Float){
-        Log.d(TAG, "setEvalResult: result = $result")
+    fun setMainOutputValue(result : Float){
+        Log.d(TAG, "setMainOutputValue: result = $result")
         activity.runOnUiThread {
-            mOutputMain.text = result.toString()
+
+            // check if can be casted to int
+            if(result % 1 == 0f){
+                mOutputMain.text = result.toInt().toString()
+            }else {
+                mOutputMain.text = result.toString()
+            }
+        }
+    }
+
+    fun setTopOutputValue(char : Char) {
+        Log.d(TAG, "setTopOutputValue: char = $char")
+        activity.runOnUiThread {
+            mOutputTop.text = char.toString()
         }
     }
 }
