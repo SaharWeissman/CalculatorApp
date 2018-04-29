@@ -3,10 +3,10 @@ package com.saharw.calculator.presentation.main.mvp
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.saharw.calculator.entities.CalculatorButton
+import com.saharw.calculator.extensions.clear
 import com.saharw.calculator.presentation.base.IPresenter
 import com.saharw.calculator.util.ExpressionUtil
 import io.reactivex.schedulers.Schedulers
-import com.saharw.calculator.extensions.clear
 
 /**
  * Created by saharw on 22/04/2018.
@@ -15,8 +15,9 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
 
     private val TAG = "MainPresenter"
     private lateinit var mExpressionSb: StringBuilder
-    private var mPendingOperator : Char = ' '
+    private var mPendingOperator : String = ""
     private val VALUE_EMPTY: String = "0"
+    private val IGNORED_STRINGS = arrayOf("="," ","")
 
     private var mWasCreated = false
     private var mWasResumed = false
@@ -71,78 +72,101 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
 
             // check if this is CLEAR button
             if(calcButton.`val` == view.clearButtonStr){
-                Log.d(TAG, "clear button was clicked")
-                onClearInvoked(0f, ' ')
+                Log.d(TAG, "onCalcBtnClicked(): clear button was clicked")
+                onClearInvoked(0f, "")
             }else {
 
-                // check if need to clear data - if current displayed number is result of previous computation
-                if(mPendingOperator == '=' && calcButton.`val` != "="){
-                    onClearInvoked(0f, ' ')
-                }
+                // check if pending operator exist
+                if(mPendingOperator != null && !IGNORED_STRINGS.contains(mPendingOperator)){
 
-                if(mPendingOperator == ' ') {
-                    mExpressionSb.append(calcButton.`val`)
+                    // if exists - need to append first the operator to expression than new char
+                    mExpressionSb.append(mPendingOperator + calcButton.`val`)
+                    mPendingOperator = ""
                 }else {
-                    var pendingOpStr = ""
-                    if(mPendingOperator != '='){
-                        pendingOpStr += mPendingOperator
-                    }
-                    if(calcButton.`val` != "="){
-                        pendingOpStr += calcButton.`val`
-                    }
-                    mExpressionSb.append(pendingOpStr)
-                    mPendingOperator = ' '
-                }
-                var expType = ExpressionUtil.getExpressionType(mExpressionSb.toString())
-                when (expType.type) {
-                    ExpressionUtil.EXP_TYPE_DISPLAY -> {
-                        Log.d(TAG, "case \"EXP_TYPE_DISPLAY\"")
-                        var value = expType.value
-                        if(value?.isEmpty()!!){
-                            value = VALUE_EMPTY
-                        }
-                        view.setMainOutputValue(value?.toFloat()!!)
-                        view.setTopOutputValue(expType.pendingOperator)
 
-                        if (mExpressionSb.last() == '=') {
-                            mExpressionSb.deleteCharAt(mExpressionSb.length - 1)
+                    /*
+                    special handling
+                     */
+                    var shouldAppend = onSpecialCaseHandle(calcButton.`val`)
+
+                    if(shouldAppend) {
+                        mExpressionSb.append(calcButton.`val`)
+                    }else {
+                        return
+                    }
+                }
+                var expTypeRes = ExpressionUtil.getExpressionType(mExpressionSb.toString().trim())
+                if(expTypeRes != null){
+                    Log.d(TAG, "onCalcBtnClicked(): expTypeRes = $expTypeRes")
+                    when(expTypeRes.type){
+                        ExpressionUtil.EXP_TYPE_DISPLAY -> {
+                            Log.d(TAG, "onCalcBtnClicked(): case \"EXP_TYPE_DISPLAY\"")
+                            if(expTypeRes.value != null) {
+                                view.setMainOutputValue(expTypeRes.value!!)
+                            }
+                            if(expTypeRes.pendingOperator != null){
+                                view.setTopOutputValue(expTypeRes.pendingOperator.toString())
+                            }
+                        }
+                        ExpressionUtil.EXP_TYPE_EVAL -> {
+                            Log.d(TAG, "onCalcBtnClicked(): case \"EXP_TYPE_EVAL\"")
+                            if(expTypeRes.pendingOperator != null){
+                                mPendingOperator = expTypeRes.pendingOperator!!
+                                view.setTopOutputValue(expTypeRes.pendingOperator.toString())
+                            }
+                            if(expTypeRes.value != null) {
+                                model.eval(expTypeRes.value!!)
+                            }
+                        }
+                        ExpressionUtil.EXP_TYPE_ERROR -> {
+                            Log.e(TAG, "onCalcBtnClicked(): case \"EXP_TYPE_ERROR\"")
                         }
                     }
-                    ExpressionUtil.EXP_TYPE_EVAL_ALL -> {
-                        Log.d(TAG, "case \"EXP_TYPE_EVAL_ALL\"")
-                        model.eval(expType.value!!)
-                    }
-                    ExpressionUtil.EXP_TYPE_EVAL_PENDING_OP -> {
-                        Log.d(TAG, "case \"EXP_TYPE_EVAL_PENDING_OP\"")
-                        mPendingOperator = expType.pendingOperator
-                        model.eval(expType.value!!)
-                    }
-                    ExpressionUtil.EXP_TYPE_ERROR -> {
-                        Log.d(TAG, "case \"EXP_TYPE_ERROR\"")
-                    }
-                    else -> {
-                        Log.e(TAG, "case \"else\"")
-                    }
+                }else {
+                    Log.e(TAG, "onCalcBtnClicked(): expTypeRes is null! clearing...")
+                    onClearInvoked(0f, "")
                 }
             }
         }
     }
 
-    private fun onEvalResultReady(result: Float?) {
-        Log.d(TAG, "onEvalResultReady: $result")
-        view.setMainOutputValue(result?: 0f)
-        mExpressionSb.clear()
-        mExpressionSb.append(result)
-        if(mPendingOperator == ' ') {
-            mPendingOperator = '='
+    private fun onSpecialCaseHandle(s: String) : Boolean {
+        var shouldAppend : Boolean
+        if(mPendingOperator == "="){
+            if(s[0].isDigit()) {
+                Log.d(TAG, "onSpecialCaseHandle: input is digit & pending op os \"=\", clearing...")
+                onClearInvoked(0f, "")
+            }else {
+                mPendingOperator = " "
+            }
         }
-        view.setTopOutputValue(mPendingOperator)
+        when(s[0]){
+            '.' -> {
+                if(mExpressionSb.last() == '.'){
+                    Log.d(TAG, "onSpecialCaseHandle: input is \".\" & last char in expression is \".\", not appending")
+                    shouldAppend = false
+                }else {
+                    shouldAppend = true
+                }
+            }else -> {
+                shouldAppend = true
+            }
+        }
+        return shouldAppend
     }
 
-    private fun onClearInvoked(clearValue : Float, clearPendingOpChar: Char) {
+    private fun onEvalResultReady(result: Float?) {
+        Log.d(TAG, "onEvalResultReady: $result")
+        var resStr = if(result != null){result}else{"0"}
+        view.setMainOutputValue(resStr.toString())
+        mExpressionSb.clear()
+        mExpressionSb.append(result)
+    }
+
+    private fun onClearInvoked(clearValue : Float, clearPendingOpChar: String) {
         mExpressionSb.clear()
         mPendingOperator = clearPendingOpChar
-        view.setMainOutputValue(clearValue)
+        view.setMainOutputValue(clearValue.toString())
         view.setTopOutputValue(clearPendingOpChar)
     }
 }
