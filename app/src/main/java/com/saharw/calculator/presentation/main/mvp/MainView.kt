@@ -82,23 +82,31 @@ class MainView : Fragment(), IView, View.OnClickListener {
         mButtonClickSubject.onNext(calcButton)
     }
 
-    fun setMainOutputValue(result : Float){
-        Log.d(TAG, "setMainOutputValue: result = $result")
+    fun setMainOutputValue(resStr: String){
+        Log.d(TAG, "setMainOutputValue: resStr = $resStr")
+        var resStr = resStr.trim()
         activity.runOnUiThread {
 
-            // check if can be casted to int
-            if(result % 1 == 0f){
-                mOutputMain.text = result.toInt().toString()
+            // check first if res is a number
+            var isOnlyDigitsOrDecimalDot = resStr.length == resStr.filter { it.isDigit() || it == '.' }.length
+            if(isOnlyDigitsOrDecimalDot){
+
+                // check if float or can be casted to int
+                if(resStr.contains(".")){
+                    mOutputMain.text = resStr.toFloat().toString()
+                }else {
+                    mOutputMain.text = resStr.toInt().toString()
+                }
             }else {
-                mOutputMain.text = result.toString()
+                mOutputMain.text = resStr
             }
         }
     }
 
-    fun setTopOutputValue(char : Char) {
-        Log.d(TAG, "setTopOutputValue: char = $char")
+    fun setTopOutputValue(resStr : String) {
+        Log.d(TAG, "setTopOutputValue: resStr = $resStr")
         activity.runOnUiThread {
-            mOutputTop.text = char.toString()
+            mOutputTop.text = resStr
         }
     }
 }
