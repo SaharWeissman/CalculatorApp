@@ -8,12 +8,12 @@ import android.util.Log
 object ExpressionUtil {
 
     private val TAG = "ExpressionUtil"
-    private val EXP_REGEX_EVAL = "(-)?([0-9|.])+(\\+|-|/|\\*)(-)?([0-9|.])+(\\+|-|/|\\*|=)"
-    private val EXP_REGEX_NUM_OP_NUM = "(-)?([0-9|.])+(\\+|-|/|\\*)(-)?([0-9|.])+"
-    private val EXP_REGEX_NUM_OP = "(-)?([0-9|.])+(\\+|-|/|\\*)"
-    private val EXP_REGEX_NUM = "(-)?([0-9|.])+"
+    val EXP_REGEX_EVAL = "(-)?([0-9|.])+(\\+|-|/|\\*)(-)?([0-9|.])+(\\+|-|/|\\*|=)"
+    val EXP_REGEX_NUM_OP_NUM = "(-)?([0-9|.])+(\\+|-|/|\\*)(-)?([0-9|.])+"
+    val EXP_REGEX_NUM_OP = "(-)?([0-9|.])+(\\+|-|/|\\*)"
+    val EXP_REGEX_NUM = "(-)?([0-9|.])+"
 
-    private val EXP_REGEX_GROUP_IDX = 3
+    val EXP_REGEX_GROUP_IDX = 3
 
     const val EXP_TYPE_ERROR = -1
     const val EXP_TYPE_DISPLAY = 0

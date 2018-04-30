@@ -140,19 +140,36 @@ class MainPresenter(private val activity: AppCompatActivity, val view: MainView,
                 mPendingOperator = " "
             }
         }
-        when(s[0]){
+        shouldAppend = when(s[0]){
             '.' -> {
-                if(mExpressionSb.last() == '.'){
-                    Log.d(TAG, "onSpecialCaseHandle: input is \".\" & last char in expression is \".\", not appending")
-                    shouldAppend = false
+                if(mExpressionSb.last() == '.' || tryingToAppendDecimalToFloat(mExpressionSb.toString())){
+                    Log.d(TAG, "onSpecialCaseHandle: input is \".\" & last char in expression is \".\" or expression contains \".\", not appending")
+                    false
                 }else {
-                    shouldAppend = true
+                    true
                 }
             }else -> {
-                shouldAppend = true
+                true
             }
         }
         return shouldAppend
+    }
+
+    private fun tryingToAppendDecimalToFloat(expression: String): Boolean {
+        var res = false
+        val regex :Regex
+        if(Regex(ExpressionUtil.EXP_REGEX_NUM_OP_NUM).matches(expression)){
+            regex = Regex(ExpressionUtil.EXP_REGEX_NUM_OP_NUM)
+            var matchResult = regex.find(expression, 0)
+            if(matchResult != null) {
+                var operator = matchResult.groupValues[ExpressionUtil.EXP_REGEX_GROUP_IDX].toCharArray()[0]
+                var rightOperand = expression.substring(expression.lastIndexOf(operator) + 1, expression.length)
+                res = rightOperand.contains('.')
+            }
+        }else if(Regex(ExpressionUtil.EXP_REGEX_NUM).matches(expression)){
+            res = expression.contains('.')
+        }
+        return res
     }
 
     private fun onEvalResultReady(result: Float?) {
