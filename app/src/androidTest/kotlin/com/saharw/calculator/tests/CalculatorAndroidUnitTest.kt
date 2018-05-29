@@ -46,6 +46,6 @@ class CalculatorAddAndroidUnitTest {
     fun testMixedAdditions() {
         Log.d(TAG, "testMixedAdditions")
         var exp = "1+(-2)"
-        assertEquals(mCalc.eval(exp), -10f)
+        assertEquals(mCalc.eval(exp), -1f)
     }
 }
